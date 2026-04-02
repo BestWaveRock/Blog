@@ -1,0 +1,53 @@
+name: Deploy Blog System
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # --- 构建后端 (NestJS) ---
+      - name: Install Backend Dependencies
+        run: npm ci
+
+      - name: Build Backend
+        run: npm run build
+
+      # --- 构建前端 (Next.js) ---
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      # --- 导出静态文件用于部署 ---
+      - name: Export Frontend Static Files
+        working-directory: frontend
+        run: npx next export
+
+      # --- 部署到Cloudflare Pages ---
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/out --project-name=blog-system
