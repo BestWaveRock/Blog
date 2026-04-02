@@ -2,13 +2,20 @@
 
 import { useState, useEffect } from 'react';
 
+interface Article {
+  id: number;
+  title: string;
+  summary: string;
+  [key: string]: any;
+}
+
 export default function HomePageTest() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  const addLog = (message) => {
+  const addLog = (message: string) => {
     const logEntry = `${new Date().toISOString()}: ${message}`;
     setLogs(prev => [...prev, logEntry]);
     console.log(logEntry);
@@ -41,7 +48,8 @@ export default function HomePageTest() {
 
         setError(false);
       } catch (err) {
-        addLog(`Failed to fetch articles: ${err.message}`);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        addLog(`Failed to fetch articles: ${errorMessage}`);
         console.error('Failed to fetch articles:', err);
         setError(true);
       } finally {

@@ -2,8 +2,28 @@
 
 import { useState, useEffect } from 'react';
 
+interface RawDataStructure {
+  isArray: boolean;
+  length: number | string;
+  firstElement: string;
+  secondElement: string;
+}
+
+interface ArticlesArrayStructure {
+  isArray: boolean;
+  length: number | string;
+  sampleItemKeys: string[] | string;
+}
+
+interface TestResult {
+  rawDataStructure?: RawDataStructure;
+  articlesArray?: ArticlesArrayStructure;
+  totalCount?: number;
+  error?: string;
+}
+
 export default function TestArticleStructure() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<TestResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   const testStructure = async () => {
@@ -35,7 +55,8 @@ export default function TestArticleStructure() {
         totalCount: totalCount
       });
     } catch (error) {
-      setResult({ error: error.message });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setResult({ error: errorMessage });
     } finally {
       setLoading(false);
     }

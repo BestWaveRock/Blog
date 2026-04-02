@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from 'react';
 
+interface Article {
+  id: number;
+  title: string;
+  [key: string]: any;
+}
+
 export default function TestPage() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -22,8 +28,9 @@ export default function TestPage() {
         console.log('Articles data:', data);
         setArticles(data[0]);
       } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
         console.error('Fetch error:', err);
-        setError(err.message);
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

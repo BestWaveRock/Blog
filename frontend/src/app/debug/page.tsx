@@ -2,10 +2,15 @@
 
 import { useState, useEffect } from 'react';
 
+interface FetchResult {
+  type: string;
+  data: any;
+}
+
 export default function DebugPage() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<FetchResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const testFetch = async () => {
     setLoading(true);
@@ -27,8 +32,9 @@ export default function DebugPage() {
       console.log('Direct fetch data:', data);
       setResult({ type: 'direct', data });
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       console.error('Direct fetch error:', err);
-      setError(`Direct fetch error: ${err.message}`);
+      setError(`Direct fetch error: ${errorMessage}`);
 
       try {
         // Try relative path
@@ -44,8 +50,9 @@ export default function DebugPage() {
         console.log('Relative fetch data:', data2);
         setResult({ type: 'relative', data: data2 });
       } catch (err2) {
+        const errorMessage2 = err2 instanceof Error ? err2.message : String(err2);
         console.error('Relative fetch error:', err2);
-        setError(prev => `${prev} | Relative fetch error: ${err2.message}`);
+        setError(prev => `${prev} | Relative fetch error: ${errorMessage2}`);
       }
     } finally {
       setLoading(false);

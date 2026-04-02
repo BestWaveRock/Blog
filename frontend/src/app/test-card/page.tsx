@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import ArticleCard from '@/components/articles/ArticleCard';
+import { Article } from '@/types';
 
 export default function TestArticleCard() {
   const [showCard, setShowCard] = useState(false);
 
-  const testArticle = {
+  const testArticle: Article = {
     id: 1,
     title: 'Test Article',
     summary: 'This is a test article summary',
@@ -15,7 +16,12 @@ export default function TestArticleCard() {
     createdAt: '2026-04-02T10:00:00.000Z',
     updatedAt: '2026-04-02T10:00:00.000Z',
     author: {
-      username: 'Test User'
+      id: 1,
+      username: 'Test User',
+      email: 'test@example.com',
+      role: 'user',
+      createdAt: '2026-04-02T10:00:00.000Z',
+      updatedAt: '2026-04-02T10:00:00.000Z'
     }
   };
 

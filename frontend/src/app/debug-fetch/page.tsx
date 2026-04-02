@@ -2,15 +2,22 @@
 
 import { useState, useEffect } from 'react';
 
+interface DebugInfo {
+  loading: boolean;
+  error: string | null;
+  data: any;
+  logs: string[];
+}
+
 export default function DebugFetchPage() {
-  const [debugInfo, setDebugInfo] = useState({
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({
     loading: false,
     error: null,
     data: null,
     logs: []
   });
 
-  const addLog = (message) => {
+  const addLog = (message: string) => {
     setDebugInfo(prev => ({
       ...prev,
       logs: [...prev.logs, `${new Date().toISOString()}: ${message}`]
@@ -61,8 +68,9 @@ export default function DebugFetchPage() {
       setDebugInfo(prev => ({ ...prev, loading: false, data, error: null }));
       addLog('Fetch completed successfully');
     } catch (error) {
-      addLog(`Fetch failed: ${error.message}`);
-      setDebugInfo(prev => ({ ...prev, loading: false, error: error.message, data: null }));
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      addLog(`Fetch failed: ${errorMessage}`);
+      setDebugInfo(prev => ({ ...prev, loading: false, error: errorMessage, data: null }));
     }
   };
 

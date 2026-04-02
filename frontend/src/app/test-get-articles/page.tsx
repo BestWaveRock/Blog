@@ -3,10 +3,20 @@
 import { useState, useEffect } from 'react';
 import { getArticles } from '@/services/articles.service';
 
+interface TestResult {
+  type: string;
+  data: {
+    isArray: boolean;
+    length: number | string;
+    firstElement: any;
+    secondElement: any;
+  };
+}
+
 export default function TestGetArticles() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<TestResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const testFunction = async () => {
     setLoading(true);
@@ -28,8 +38,9 @@ export default function TestGetArticles() {
         }
       });
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       console.error('getArticles error:', err);
-      setError(err.message);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

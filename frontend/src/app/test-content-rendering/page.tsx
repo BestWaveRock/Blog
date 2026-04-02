@@ -3,12 +3,27 @@
 import { useState } from 'react';
 import EditorJSRenderer from '@/components/articles/EditorJSRenderer';
 
+interface EditorJSBlock {
+  id: string;
+  type: string;
+  data: {
+    text: string;
+    level?: number;
+  };
+}
+
+interface EditorJSContent {
+  time: number;
+  blocks: EditorJSBlock[];
+  version: string;
+}
+
 export default function TestContentRendering() {
-  const [testContent, setTestContent] = useState('');
+  const [testContent, setTestContent] = useState<string>('');
   const [renderMode, setRenderMode] = useState('json');
 
   // 测试用的Editor.js JSON内容
-  const editorJsContent = {
+  const editorJsContent: EditorJSContent = {
     "time": 1775110791978,
     "blocks": [
       {
@@ -44,7 +59,7 @@ export default function TestContentRendering() {
     if (renderMode === 'json') {
       setTestContent(JSON.stringify(editorJsContent));
     } else if (renderMode === 'parsed-json') {
-      setTestContent(editorJsContent);
+      setTestContent(JSON.stringify(editorJsContent));
     } else {
       setTestContent(plainTextContent);
     }

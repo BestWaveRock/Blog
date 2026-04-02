@@ -3,14 +3,15 @@
 import { useState, useEffect } from 'react';
 import ArticleList from '@/components/articles/ArticleList';
 import { getArticles } from '@/services/articles.service';
+import { Article } from '@/types';
 
 export default function DebugHomePage() {
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<string[]>([]);
 
-  const addLog = (message) => {
+  const addLog = (message: string) => {
     setLogs(prev => [...prev, `${new Date().toISOString()}: ${message}`]);
     console.log(message);
   };
@@ -31,7 +32,8 @@ export default function DebugHomePage() {
         setArticles(articlesData);
         setError(false);
       } catch (err) {
-        addLog(`Failed to fetch articles: ${err.message}`);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        addLog(`Failed to fetch articles: ${errorMessage}`);
         console.error('Failed to fetch articles:', err);
         setError(true);
       } finally {
