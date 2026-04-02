@@ -1,0 +1,49 @@
+name: Build and Deploy blog-system
+
+on:
+  push:
+    branches:
+      - main # 确保你的主分支名是 main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # --- 步骤 1：构建后端 (防止 Nest.js 扫描前端导致报错) ---
+      # 确保你已经按照我之前的建议修改了 tsconfig.backend.json 的 exclude 字段
+      - name: Install Root Dependencies (Backend)
+        run: npm install
+
+      - name: Build Backend (Nest.js)
+        run: npm run build -- --config tsconfig.backend.json
+
+      # --- 步骤 2：构建前端 (Next.js 静态导出) ---
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build Frontend (Next.js)
+        working-directory: frontend
+        run: npm run build
+        env:
+          # 如果你的前端需要 API 地址，可以在这里注入
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+      # --- 步骤 3：部署到 Cloudflare Pages ---
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # 核心：部署前端生成的静态目录 (通常是 out)
+          command: pages deploy frontend/out --project-name=blog-system
