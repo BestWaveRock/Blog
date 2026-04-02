@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "title": "测试文章",
+    "summary": "测试文章摘要",
+    "content": "这是一篇测试文章的内容。",
+    "status": "draft",
+    "createdAt": "2026-04-01T10:04:48.000Z",
+    "updatedAt": "2026-04-01T10:04:48.000Z",
+    "author": {
+      "id": 1,
+      "username": "testuser",
+      "email": "test@example.com",
+      "role": "user",
+      "createdAt": "2026-04-01T09:59:14.000Z",
+      "updatedAt": "2026-04-01T09:59:14.000Z"
+    },
+    "categories": [],
+    "tags": []
+  }
+]

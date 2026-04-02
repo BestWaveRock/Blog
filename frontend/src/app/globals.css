@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --accent: #0071e3;
+  --accent-light: #2997ff;
+  --secondary: #86868b;
+  --surface: #f5f5f7;
+  --surface-dark: #1d1d1f;
+  --border: #d2d2d7;
+  --success: #32d74b;
+  --warning: #ff9f0a;
+  --error: #ff453a;
+}
+
+[data-theme="dark"] {
+  --background: #000000;
+  --foreground: #f5f5f7;
+  --accent: #0a84ff;
+  --accent-light: #409cff;
+  --secondary: #86868b;
+  --surface: #1d1d1f;
+  --surface-dark: #000000;
+  --border: #424245;
+  --success: #32d74b;
+  --warning: #ff9f0a;
+  --error: #ff453a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
+  --color-surface-dark: var(--surface-dark);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+
+  /* 字体设置 */
+  --font-inter: var(--font-inter);
+  --font-roboto-flex: var(--font-roboto-flex);
+  --font-space-grotesk: var(--font-space-grotesk);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: var(--font-space-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-roboto-flex), SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* 全局样式 */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+/* Apple风格的排版系统 */
+.typography-hero {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 3rem;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.typography-heading-1 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.typography-heading-2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.typography-heading-3 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.typography-body-large {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.typography-body {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.typography-body-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.typography-caption {
+  font-size: 0.75rem;
+  line-height: 1.33;
+}
+
+.typography-code {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Apple风格的按钮 */
+.btn-apple-primary {
+  background-color: var(--accent);
+  color: white;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-apple-primary:hover {
+  background-color: var(--accent-light);
+  transform: scale(1.02);
+}
+
+.btn-apple-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-apple-secondary {
+  background-color: rgba(130, 130, 135, 0.12);
+  color: var(--foreground);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-apple-secondary:hover {
+  background-color: rgba(130, 130, 135, 0.2);
+  transform: scale(1.02);
+}
+
+.btn-apple-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Apple风格的卡片 */
+.card-apple {
+  background: var(--background);
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+}
+
+.card-apple:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Apple风格的输入框 */
+.input-apple {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input-apple:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+}
+
+.input-apple::placeholder {
+  color: var(--secondary);
+}
+
+/* Apple风格的导航 */
+.nav-apple {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.72);
+  border-bottom: 1px solid rgba(60, 60, 67, 0.12);
+}
+
+[data-theme="dark"] .nav-apple {
+  background: rgba(28, 28, 30, 0.72);
+  border-bottom: 1px solid rgba(84, 84, 89, 0.18);
+}
+
+/* Apple风格的分隔线 */
+.divider-apple {
+  height: 1px;
+  background: var(--border);
+  margin: 24px 0;
+}
+
+/* Apple风格的动画 */
+.apple-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.apple-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

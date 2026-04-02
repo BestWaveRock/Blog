@@ -1,0 +1,9 @@
+{
+  "type": "sqlite",
+  "database": "blog.db",
+  "synchronize": true,
+  "logging": false,
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "migrations": ["dist/migration/**/*{.ts,.js}"],
+  "subscribers": ["dist/subscriber/**/*{.ts,.js}"]
+}
