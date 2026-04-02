@@ -46,18 +46,20 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      # --- 创建部署目录 ---
+      - name: Create Deployment Directory
+        working-directory: frontend
+        run: |
+          mkdir -p deployment
+          cp -r .next deployment/
+          cp -r public deployment/
+          cp package.json deployment/
+          cp next.config.ts deployment/
+
       # --- 部署到Cloudflare Pages ---
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/.next/standalone --project-name=blog-system
-
-      # --- 部署静态资源 ---
-      - name: Deploy Static Assets
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/.next/static --project-name=blog-static
+          command: pages deploy frontend/deployment --project-name=blog-system
