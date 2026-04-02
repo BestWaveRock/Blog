@@ -46,15 +46,18 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # --- 导出静态文件用于部署 ---
-      - name: Export Frontend Static Files
-        working-directory: frontend
-        run: npm run export
-
       # --- 部署到Cloudflare Pages ---
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/out --project-name=blog-system
+          command: pages deploy frontend/.next/standalone --project-name=blog-system
+
+      # --- 部署静态资源 ---
+      - name: Deploy Static Assets
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/.next/static --project-name=blog-static
