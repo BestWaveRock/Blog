@@ -9,6 +9,7 @@
     "dist",
     "**/*spec.ts",
     "frontend",
-    "frontend/**/*"
+    "frontend/**/*",
+    "**/node_modules/**/*"
   ]
 }
