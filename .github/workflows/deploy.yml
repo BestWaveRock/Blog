@@ -52,4 +52,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/deployment --project-name=blog-system
+          command: pages deploy frontend/.vercel/output/static --project-name=blog-system
