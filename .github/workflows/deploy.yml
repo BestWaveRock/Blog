@@ -46,16 +46,6 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # --- 创建部署目录 ---
-      - name: Create Deployment Directory
-        working-directory: frontend
-        run: |
-          mkdir -p deployment
-          cp -r .next deployment/
-          cp -r public deployment/
-          cp package.json deployment/
-          cp next.config.ts deployment/
-
       # --- 部署到Cloudflare Pages ---
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
