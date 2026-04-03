@@ -1,0 +1,13 @@
+# Cloudflare Pages Configuration for Next.js
+
+# This configuration is specific for deploying a Next.js application using Cloudflare Pages.
+
+# Build Command
+# Set the command used to build your application.
+build_command = "npm run build"
+
+# Directory where the build output will be generated.
+directory = "out"
+
+# Specify the framework you are using for deployment.
+framework = "next"
