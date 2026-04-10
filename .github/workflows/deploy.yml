@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       # --- 构建后端 (NestJS) ---
       - name: Install Backend Dependencies
@@ -39,10 +40,17 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      # --- 构建前端静态文件 ---
+      - name: Export Frontend Static Files
+        working-directory: frontend
+        run: npm run build && npx next export
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
       # --- 部署到Cloudflare Pages ---
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy frontend/.vercel/output/static --project-name=blog-system
+          command: pages deploy frontend/out --project-name=blog-system
