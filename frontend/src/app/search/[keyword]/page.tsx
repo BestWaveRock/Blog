@@ -15,7 +15,15 @@ export default function SearchResultsPage({ params }: { params: { keyword: strin
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const decodedKeyword = decodeURIComponent(params.keyword);
+
+  // 使用useEffect来处理异步参数解析
+  const [decodedKeyword, setDecodedKeyword] = useState<string>('');
+
+  useEffect(() => {
+    if (params?.keyword) {
+      setDecodedKeyword(decodeURIComponent(params.keyword));
+    }
+  }, [params]);
 
   useEffect(() => {
     const fetchArticles = async () => {
