@@ -8,22 +8,14 @@ import ArticleList from '@/components/articles/ArticleList';
 import { searchArticles } from '@/services/search.service';
 import { Article } from '@/types';
 
-export default function SearchResultsPage({ params }: { params: Promise<{ keyword: string }> }) {
+export default function SearchResultsPage({ params }: { params: { keyword: string } }) {
   const { isAuthenticated } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  // 使用useEffect来处理异步参数解析
-  const [decodedKeyword, setDecodedKeyword] = useState<string>('');
-
-  useEffect(() => {
-    if (params?.keyword) {
-      setDecodedKeyword(decodeURIComponent(params.keyword));
-    }
-  }, [params]);
+  const decodedKeyword = params?.keyword ? decodeURIComponent(params.keyword) : '';
 
   useEffect(() => {
     const fetchArticles = async () => {
