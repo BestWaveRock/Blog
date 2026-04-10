@@ -8,7 +8,7 @@ import ArticleList from '@/components/articles/ArticleList';
 import { searchArticles } from '@/services/search.service';
 import { Article } from '@/types';
 
-export default function SearchResultsPage({ params }: { params: { keyword: string } }) {
+export default function SearchResultsPage({ params }: { params: Promise<{ keyword: string }> }) {
   const { isAuthenticated } = useAuth();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
