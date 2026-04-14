@@ -22,6 +22,12 @@ export class User {
   })
   role: UserRole;
 
+  @Column({
+    type: 'varchar',
+    nullable: true
+  })
+  avatar: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

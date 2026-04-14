@@ -5,15 +5,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { useRouter } from 'next/navigation';
-import { getUserProfile, updateUserProfile } from '@/services/users.service';
+import { getUserProfile, updateUserProfile, uploadAvatar } from '@/services/users.service';
 
 export default function ProfilePage() {
-  const { isAuthenticated, user, token, logout } = useAuth();
+  const { isAuthenticated, user, token, logout, updateUser } = useAuth();
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -32,9 +34,10 @@ export default function ProfilePage() {
         const userProfile = await getUserProfile(token!);
         setUsername(userProfile.username);
         setEmail(userProfile.email);
+        setAvatar(userProfile.avatar);
       } catch (err) {
         console.error('获取用户资料失败:', err);
-        setError('Failed to load user profile');
+        setError('获取用户资料失败');
       } finally {
         setLoading(false);
       }
@@ -47,12 +50,12 @@ export default function ProfilePage() {
     e.preventDefault();
 
     if (!username.trim()) {
-      setError('Please enter a username');
+      setError('请输入用户名');
       return;
     }
 
     if (!email.trim()) {
-      setError('Please enter an email address');
+      setError('请输入邮箱地址');
       return;
     }
 
@@ -62,19 +65,58 @@ export default function ProfilePage() {
       setSuccess(null);
 
       // 更新用户资料
-      await updateUserProfile({ username, email }, token!);
+      const updatedUser = await updateUserProfile({ username, email }, token!);
 
-      setSuccess('User profile updated successfully');
+      // 更新AuthContext中的用户信息
+      if (updateUser) {
+        updateUser(updatedUser);
+      }
+
+      setSuccess('用户资料更新成功');
 
       // 3秒后清除成功消息
       setTimeout(() => {
         setSuccess(null);
       }, 3000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('更新用户资料失败:', err);
-      setError('Failed to update user profile, please try again');
+      setError(err.message || '更新用户资料失败，请重试');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      setError(null);
+      setSuccess(null);
+
+      // 上传头像
+      const updatedUser = await uploadAvatar(file, token!);
+
+      // 更新状态
+      setAvatar(updatedUser.avatar);
+
+      // 更新AuthContext中的用户信息
+      if (updateUser) {
+        updateUser(updatedUser);
+      }
+
+      setSuccess('头像上传成功');
+
+      // 3秒后清除成功消息
+      setTimeout(() => {
+        setSuccess(null);
+      }, 3000);
+    } catch (err: any) {
+      console.error('上传头像失败:', err);
+      setError(err.message || '上传头像失败，请重试');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -109,7 +151,7 @@ export default function ProfilePage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="px-6 py-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              User Profile
+              用户资料
             </h1>
 
             {error && (
@@ -124,11 +166,53 @@ export default function ProfilePage() {
               </div>
             )}
 
+            {/* 头像上传 */}
+            <div className="mb-8 flex flex-col items-center">
+              <div className="relative mb-4">
+                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-indigo-100 dark:border-indigo-900">
+                  {avatar ? (
+                    <img
+                      src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/${avatar.replace('./', '')}`}
+                      alt="用户头像"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      <span className="text-gray-500 dark:text-gray-400 text-2xl">
+                        {username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="absolute bottom-0 right-0">
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                    <div className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+                      {uploading ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">点击上传头像</p>
+            </div>
+
             <form onSubmit={handleSubmit}>
               {/* 用户名 */}
               <div className="mb-6">
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Username *
+                  用户名 *
                 </label>
                 <input
                   type="text"
@@ -136,14 +220,14 @@ export default function ProfilePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter username"
+                  placeholder="输入用户名"
                 />
               </div>
 
               {/* 邮箱 */}
               <div className="mb-6">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email Address *
+                  邮箱地址 *
                 </label>
                 <input
                   type="email"
@@ -151,7 +235,7 @@ export default function ProfilePage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter email address"
+                  placeholder="输入邮箱地址"
                 />
               </div>
 
@@ -163,7 +247,7 @@ export default function ProfilePage() {
                     disabled={saving}
                     className="px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
                   >
-                    {saving ? 'Saving...' : 'Save Profile'}
+                    {saving ? '保存中...' : '保存资料'}
                   </button>
                 </div>
                 <div>
@@ -172,7 +256,7 @@ export default function ProfilePage() {
                     onClick={handleLogout}
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Logout
+                    退出登录
                   </button>
                 </div>
               </div>

@@ -44,3 +44,29 @@ export const updateUserProfile = async (userData: { username: string; email: str
     throw error;
   }
 };
+
+// 上传头像
+export const uploadAvatar = async (file: File, token: string): Promise<any> => {
+  try {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const res = await fetch(`${API_BASE_URL}/users/avatar`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || '上传头像失败');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('上传头像错误:', error);
+    throw error;
+  }
+};

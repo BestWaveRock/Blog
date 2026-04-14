@@ -9,6 +9,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+  updateUser: (userData: User) => void;
   isAuthenticated: boolean;
 }
 
@@ -53,6 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('token');
   };
 
+  const updateUser = (userData: User) => {
+    setUser(userData);
+  };
+
   const isAuthenticated = !!token;
 
   const value = {
@@ -60,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     token,
     login,
     logout,
+    updateUser,
     isAuthenticated,
   };
 
