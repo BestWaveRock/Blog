@@ -36,16 +36,12 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Build Frontend
-        working-directory: frontend
-        run: npm run build
-
       # --- 构建前端静态文件 ---
       - name: Export Frontend Static Files
         working-directory: frontend
         run: npm run build && npx next export
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:3000' }}
 
       # --- 部署到Cloudflare Pages ---
       - name: Deploy to Cloudflare Pages
