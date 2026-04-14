@@ -33,15 +33,13 @@ export const getArticleById = async (id: number): Promise<Article> => {
     console.log('Raw article content type:', typeof data.content);
     console.log('Raw article content value:', data.content);
 
-    // Check if content is an object with keys {content, meta, items}
-    if (typeof data.content === 'object' &&
-        data.content !== null &&
-        'content' in data.content &&
-        'meta' in data.content &&
-        'items' in data.content) {
-      console.log('Content is already parsed, converting back to string');
-      // Convert back to string
+    // Check if content is an object
+    if (typeof data.content === 'object' && data.content !== null) {
+      console.log('Content is an object, converting to string');
+      // Convert object to string
       data.content = JSON.stringify(data.content);
+      console.log('After conversion - content type:', typeof data.content);
+      console.log('After conversion - content value:', data.content);
     }
 
     return data;

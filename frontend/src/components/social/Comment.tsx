@@ -122,18 +122,23 @@ const Comment: React.FC<CommentProps> = ({ comment, onReplySubmit, onCommentUpda
       {/* 评论头部 */}
       <div className="flex items-center mb-2">
         <div className="flex-shrink-0">
-          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
+          <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8 flex items-center justify-center">
+            {comment.author?.username ? comment.author.username.charAt(0).toUpperCase() : '?'}  
+          </div>
         </div>
         <div className="ml-3">
           <p className="text-sm font-medium text-gray-900 dark:text-white">
             {comment.author?.username || '未知用户'}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {new Date(comment.createdAt).toLocaleDateString('en-US', {
+            {new Date(comment.createdAt).toLocaleString('zh-CN', {
               year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            }).replace(/\//g, '/')}
           </p>
         </div>
       </div>

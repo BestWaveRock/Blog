@@ -63,7 +63,8 @@ export class RatingService {
       .where('rating.articleId = :articleId', { articleId })
       .getRawOne();
 
-    return result ? parseFloat(result.average) : 0;
+    const average = result ? parseFloat(result.average) : 0;
+    return isNaN(average) ? 0 : average;
   }
 
   async getUserRatings(userId: number): Promise<Rating[]> {

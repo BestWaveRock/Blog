@@ -64,7 +64,8 @@ export const getArticleReactions = async (articleId: number, token?: string): Pr
     return res.json();
   } catch (error) {
     console.error('获取反应统计错误:', error);
-    throw error;
+    // 如果发生错误，返回默认值
+    return { likes: 0, dislikes: 0 };
   }
 };
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { createOrUpdateReaction, removeReaction, getArticleReactions, getUserReaction } from '@/services/reaction.service';
 
 interface ReactionProps {
@@ -10,6 +11,7 @@ interface ReactionProps {
 
 const Reaction: React.FC<ReactionProps> = ({ articleId }) => {
   const { isAuthenticated, token } = useAuth();
+  const router = useRouter();
   const [userReaction, setUserReaction] = useState<'like' | 'dislike' | null>(null);
   const [reactions, setReactions] = useState<{ likes: number; dislikes: number }>({ likes: 0, dislikes: 0 });
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,8 @@ const Reaction: React.FC<ReactionProps> = ({ articleId }) => {
   // 处理点赞
   const handleLike = async () => {
     if (!isAuthenticated || !token) {
-      setError('请登录后执行此操作');
+      // 跳转到登录页面
+      router.push('/auth/login');
       return;
     }
 
@@ -83,7 +86,8 @@ const Reaction: React.FC<ReactionProps> = ({ articleId }) => {
   // 处理点踩
   const handleDislike = async () => {
     if (!isAuthenticated || !token) {
-      setError('请登录后执行此操作');
+      // 跳转到登录页面
+      router.push('/auth/login');
       return;
     }
 
@@ -184,7 +188,7 @@ const Reaction: React.FC<ReactionProps> = ({ articleId }) => {
 
       {!isAuthenticated && (
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          请登录后进行反应操作
+          请 <button onClick={() => router.push('/auth/login')} className="text-blue-500 dark:text-blue-400 hover:underline cursor-pointer">登录</button> 后进行反应操作
         </p>
       )}
     </div>

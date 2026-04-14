@@ -29,7 +29,9 @@ export class RatingController {
   async getArticleAverageRating(
     @Param('articleId', ParseIntPipe) articleId: number,
   ): Promise<number> {
-    return this.ratingService.getArticleAverageRating(articleId);
+    const average = await this.ratingService.getArticleAverageRating(articleId);
+    // 确保返回的是一个有效的数字
+    return isNaN(average) ? 0 : average;
   }
 
   @Get('user/:userId')

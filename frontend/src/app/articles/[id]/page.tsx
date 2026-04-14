@@ -49,17 +49,24 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
         console.log('Article content type:', typeof articleData.content);
         console.log('Article content value:', articleData.content);
 
-        // Check if content is an object with keys {content, meta, items}
-        if (typeof articleData.content === 'object' &&
-            articleData.content !== null &&
-            'content' in articleData.content &&
-            'meta' in articleData.content &&
-            'items' in articleData.content) {
-          console.log('Content is already parsed, converting back to string');
-          // Convert back to string
+        // 确保 content 字段是字符串
+        if (typeof articleData.content === 'object' && articleData.content !== null) {
+          console.log('Content is an object, converting to string');
+          // Convert object to string
           articleData.content = JSON.stringify(articleData.content);
+          console.log('After conversion - content type:', typeof articleData.content);
+          console.log('After conversion - content value:', articleData.content);
+        } else if (typeof articleData.content === 'string') {
+          console.log('Content is already a string');
+        } else {
+          console.log('Content is of type:', typeof articleData.content);
+          articleData.content = String(articleData.content);
+          console.log('After conversion to string - content type:', typeof articleData.content);
+          console.log('After conversion to string - content value:', articleData.content);
         }
 
+        // 再次确认 content 类型
+        console.log('Final content type before setting state:', typeof articleData.content);
         setArticle(articleData);
         setError(false);
       } catch (err) {
@@ -134,20 +141,17 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
                 </p>
                 <div className="flex typography-caption text-secondary">
                   <time dateTime={article.createdAt}>
-                    {new Date(article.createdAt).toLocaleDateString('en-US', {
+                    {new Date(article.createdAt).toLocaleString('zh-CN', {
                       year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    }).replace(/\//g, '/')}
                   </time>
                   <span className="mx-2">·</span>
-                  <span>{
-                    typeof article.content === 'string'
-                      ? Math.ceil(article.content.length / 500)
-                      : typeof article.content === 'object'
-                        ? Math.ceil(JSON.stringify(article.content).length / 500)
-                        : 0
-                  } min read</span>
+                  <span>{typeof article.content === 'string' ? Math.ceil(article.content.length / 500) : typeof article.content === 'object' ? Math.ceil(JSON.stringify(article.content).length / 500) : 0} min read</span>
                 </div>
               </div>
             </div>
@@ -162,7 +166,7 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ id: st
 
             <div className="mt-8">
               {article.content ? (
-                <EditorJSRenderer content={article.content} />
+                <EditorJSRenderer content={typeof article.content === 'object' ? JSON.stringify(article.content) : article.content} />
               ) : (
                 <div>Content not available</div>
               )}

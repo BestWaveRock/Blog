@@ -41,10 +41,13 @@ export const getArticleAverageRating = async (articleId: number, token?: string)
       throw new Error('获取评分失败');
     }
 
-    return res.json();
+    const data = await res.json();
+    // 确保返回的是一个有效的数字
+    return typeof data === 'number' && !isNaN(data) ? data : 0;
   } catch (error) {
     console.error('获取评分错误:', error);
-    throw error;
+    // 如果发生错误，返回 0
+    return 0;
   }
 };
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { createBookmark, removeBookmark, isArticleBookmarked } from '@/services/bookmark.service';
 
 interface BookmarkProps {
@@ -10,6 +11,7 @@ interface BookmarkProps {
 
 const Bookmark: React.FC<BookmarkProps> = ({ articleId }) => {
   const { isAuthenticated, token } = useAuth();
+  const router = useRouter();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState(false);
@@ -42,7 +44,8 @@ const Bookmark: React.FC<BookmarkProps> = ({ articleId }) => {
   // 处理收藏切换
   const handleToggleBookmark = async () => {
     if (!isAuthenticated || !token) {
-      setError('请登录后收藏');
+      // 跳转到登录页面
+      router.push('/auth/login');
       return;
     }
 
@@ -121,7 +124,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ articleId }) => {
 
       {!isAuthenticated && (
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          请登录后收藏
+          请 <button onClick={() => router.push('/auth/login')} className="text-blue-500 dark:text-blue-400 hover:underline cursor-pointer">登录</button> 后收藏
         </p>
       )}
     </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { createOrUpdateRating, getUserRatingForArticle, getArticleAverageRating } from '@/services/rating.service';
 
 interface RatingProps {
@@ -10,6 +11,7 @@ interface RatingProps {
 
 const Rating: React.FC<RatingProps> = ({ articleId }) => {
   const { isAuthenticated, token } = useAuth();
+  const router = useRouter();
   const [userRating, setUserRating] = useState<number | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,8 @@ const Rating: React.FC<RatingProps> = ({ articleId }) => {
   // 处理评分提交
   const handleRatingSubmit = async (score: number) => {
     if (!isAuthenticated || !token) {
-      setError('请登录后评分');
+      // 跳转到登录页面
+      router.push('/auth/login');
       return;
     }
 
@@ -125,7 +128,7 @@ const Rating: React.FC<RatingProps> = ({ articleId }) => {
 
       {!isAuthenticated && (
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          请登录后评分
+          请 <button onClick={() => router.push('/auth/login')} className="text-blue-500 dark:text-blue-400 hover:underline cursor-pointer">登录</button> 后评分
         </p>
       )}
     </div>

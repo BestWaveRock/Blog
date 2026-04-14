@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Comment from './Comment';
 import { getArticleComments, createComment } from '@/services/comment.service';
@@ -11,6 +12,7 @@ interface CommentListProps {
 }
 
 const CommentList: React.FC<CommentListProps> = ({ articleId }) => {
+  const router = useRouter();
   const { isAuthenticated, token } = useAuth();
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,7 @@ const CommentList: React.FC<CommentListProps> = ({ articleId }) => {
     e.preventDefault();
 
     if (!isAuthenticated || !token) {
-      setError('请登录后评论');
+      router.push('/auth/login');
       return;
     }
 
@@ -71,12 +73,12 @@ const CommentList: React.FC<CommentListProps> = ({ articleId }) => {
   // 处理回复提交
   const handleReplySubmit = async (parentId: number, content: string) => {
     if (!isAuthenticated || !token) {
-      setError('Please log in to reply');
+      router.push('/auth/login');
       return;
     }
 
     if (!content.trim()) {
-      setError('Please enter reply content');
+      setError('请输入回复内容');
       return;
     }
 
@@ -87,7 +89,7 @@ const CommentList: React.FC<CommentListProps> = ({ articleId }) => {
       setComments(commentsData);
     } catch (err) {
       console.error('回复提交失败:', err);
-      setError('Reply submission failed, please try again');
+      setError('回复提交失败，请重试');
     }
   };
 
@@ -131,9 +133,15 @@ const CommentList: React.FC<CommentListProps> = ({ articleId }) => {
         </form>
       ) : (
         <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-md text-center">
-          <p className="text-gray-700 dark:text-gray-300">
+          <p className="text-gray-700 dark:text-gray-300 mb-3">
             请登录后评论
           </p>
+          <button
+            onClick={() => router.push('/auth/login')}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            登录
+          </button>
         </div>
       )}
 
